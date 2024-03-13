@@ -4,16 +4,33 @@ import { db } from "../../db/db";
 export function FilesList() {
     const files = useLiveQuery(() => db.files.toArray())
 
+    const printFile = async(blob) => {
+      try {
+        const file = new File([blob], "File name",{ type: "application/pdf" })
+        const url = URL.createObjectURL(file)
+        console.log(url)
+        const iframe = document.getElementById('receipt')
+
+        iframe.src = url
+        iframe.onload = () => {
+          iframe.contentWindow.print()
+          URL.revokeObjectURL(url)
+        }
+      } catch(err) {
+        console.error(err)
+      }
+    }
+
     const getFileBlob = async(file) => {
-        console.log(file)
-        fetch(file)
-        .then(res => {res.blob(); console.log(res)})
-        .then(blob => {
-            const file = new File([blob], "File name",{ type: "application/pdf" })
-            const url = URL.createObjectURL(file)
-            console.log(url)
-            // window.open(url)
-        })
+      try {
+        const response = await fetch(file)
+        const blob = await response.blob()
+  
+        console.log(blob)
+        printFile(blob)
+      } catch(err) {
+        console.error(err)
+      }
     }
   
     return (
