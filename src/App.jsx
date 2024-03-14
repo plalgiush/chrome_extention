@@ -4,7 +4,6 @@ import { db } from './db/db';
 import { FilesList } from './components/FilesList/FilesList';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true)
   const [fileObj, setFile] = useState({ base64: undefined, name: undefined, type: undefined })
 
   async function addFile() {
@@ -30,32 +29,6 @@ function App() {
     }
   }
 
-  const handleMessage = (event) => {
-    if (event.data.action === 'receipt-loaded') {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('message', handleMessage)
-
-    return () => {
-      window.removeEventListener('message', handleMessage)
-    }
-  }, [])
-
-  const printIframe = (id) => {
-    const iframe = document.frames
-      ? document.frames[id]
-      : document.getElementById(id)
-    const iframeWindow = iframe.contentWindow || iframe
-
-    iframe.focus()
-    iframeWindow.print()
-
-    return false
-  }
-
   return (
     <div className="App">
         <form>
@@ -71,9 +44,6 @@ function App() {
           style={{ display: 'none' }}
           title="Receipt"
         />
-        <button onClick={()=> printIframe('receipt')}>
-          {isLoading ? 'Loading...' : 'Print Receipt'}
-        </button>
     </div>
   );
 }
