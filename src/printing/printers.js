@@ -6,6 +6,7 @@ let listOfPrinters = [];
 let filename;
 
 function rollPrintingEnabled() {
+    alert(document.getElementById('rollPrinters').checked)
   return document.getElementById('rollPrinters').checked;
 }
 
@@ -62,7 +63,7 @@ function onPrintButtonClicked(printerId, dpi, performTrim) {
           })
         }
       };
-      chrome.printing.submitJob(request).then((response) => {
+      chrome.printerProvider.submitJob(request).then((response) => {
         if (response !== undefined) {
           console.log(response.status);
         }
@@ -75,7 +76,7 @@ function onPrintButtonClicked(printerId, dpi, performTrim) {
 }
 
 function onCancelButtonClicked(jobId) {
-  chrome.printing.cancelJob(jobId).then((response) => {
+  chrome.printerProvider.cancelJob(jobId).then((response) => {
     if (response !== undefined) {
       console.log(response.status);
     }
@@ -159,7 +160,7 @@ function createPrintersTable() {
     }
   });
 
-  chrome.printing.onJobStatusChanged.addListener((jobId, status) => {
+  chrome.printerProvider.onJobStatusChanged.addListener((jobId, status) => {
     console.log(`jobId: ${jobId}, status: ${status}`);
     let jobTr = document.getElementById(jobId);
     if (jobTr == undefined) {
@@ -191,9 +192,9 @@ function createPrintersTable() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  chrome.printing.getPrinters().then((printers) => {
+  chrome.printerProvider.getPrinters().then((printers) => {
     printers.forEach((printer) => {
-      chrome.printing.getPrinterInfo(printer.id).then((printerInfo) => {
+      chrome.printerProvider.getPrinterInfo(printer.id).then((printerInfo) => {
         listOfPrinters.push({ data: printer, info: printerInfo });
         createPrintersTable();
       });

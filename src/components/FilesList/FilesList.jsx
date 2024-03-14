@@ -4,11 +4,10 @@ import { db } from "../../db/db";
 export function FilesList() {
     const files = useLiveQuery(() => db.files.toArray())
 
-    const printFile = async(blob) => {
+    const printFile = async(fileBlob, fileType) => {
       try {
-        const file = new File([blob], "File name",{ type: "application/pdf" })
+        const file = new File([fileBlob], "File name",{ type: `${fileType}` })
         const url = URL.createObjectURL(file)
-        console.log(url)
         const iframe = document.getElementById('receipt')
 
         iframe.src = url
@@ -21,13 +20,12 @@ export function FilesList() {
       }
     }
 
-    const getFileBlob = async(file) => {
+    const getFileBlob = async(base64, type) => {
       try {
-        const response = await fetch(file)
+        const response = await fetch(base64)
         const blob = await response.blob()
   
-        console.log(blob)
-        printFile(blob)
+        printFile(blob, type)
       } catch(err) {
         console.error(err)
       }
@@ -35,9 +33,9 @@ export function FilesList() {
   
     return (
       <ul>
-        {files?.map((file) => (
-          <li key={file.id} onClick={() => {getFileBlob(file.file)}}>
-            {file.file}
+        {files?.map((fileObj) => (
+          <li key={fileObj.id} onClick={() => {getFileBlob(fileObj.base64, fileObj.type)}}>
+            {fileObj.name}
           </li>
         ))}
       </ul>

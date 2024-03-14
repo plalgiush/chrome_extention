@@ -5,25 +5,28 @@ import { FilesList } from './components/FilesList/FilesList';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true)
-  const [file, setFile] = useState()
+  const [fileObj, setFile] = useState({ base64: undefined, name: undefined, type: undefined })
 
   async function addFile() {
-    try {
-      const id = await db.files.add({
-        file
-      })
+    if (!fileObj.name) return
 
-      console.log(`File ${file} successfully added. Got id ${id}`)
+    try {
+      const id = await db.files.add(
+        fileObj
+      )
+
+      console.log(`File ${fileObj.name} successfully added. Got id ${id}`)
     } catch (error) {
-      console.error(`Failed to add ${file}: ${error}`)
+      console.error(`Failed to add ${fileObj.name}: ${error}`)
     }
   }
 
   const getFile = (e) => {
     let reader = new FileReader()
     reader.readAsDataURL(e[0])
+    setFile(prevState => ({ ...prevState, name: e[0].name, type: e[0].type }))
     reader.onload = (e) => {
-      setFile(reader.result)
+      setFile(prevState => ({ ...prevState, base64: reader.result }))
     }
   }
 
