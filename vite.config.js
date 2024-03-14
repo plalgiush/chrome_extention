@@ -20,7 +20,11 @@ export default defineConfig({
     rollupOptions: {
         input: {
           main: resolve(__dirname, 'index.html'),
-          popup: resolve(pagesDir, 'popup', 'index.html')
+          popup: resolve(pagesDir, 'popup', 'index.html'),
+          background: resolve(pagesDir, 'background', 'index.js')
+        },
+        output: {
+          entryFileNames: 'src/pages/[name]/index.js'
         }
       }
     }
