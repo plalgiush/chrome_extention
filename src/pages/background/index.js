@@ -1,6 +1,7 @@
 console.log('background loaded');
 
-chrome.storage.local.get('files', function(data) {
-    console.log(data)
-})
-  
+chrome.runtime.onInstalled.addListener(function() {
+    chrome.printing.getPrinters(function(printers) {
+      console.log("Printers:", printers)
+    })
+  })

@@ -24,3 +24,16 @@ button {
     background-color: white;
     box-shadow: 0px 0px 5px #0000009e;
 }
+
+table, th, td, tr {
+    border: 1px solid black;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  div {
+    overflow: auto;
+  }

@@ -1,21 +1,21 @@
 import React from 'react'
 import { FilesList } from '../../components/FilesList/FilesList';
 
-const Popup = () => {
+const Popup = (props) => {
+  const handlePrint = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      const fileURL = URL.createObjectURL(file)
+      chrome.tabs.create({ url: fileURL })
+    }
+  }
+
   return (
-    <>
-      <div className="App">
-        <h1>
-          Chose a file to the print
-        </h1>
-        <FilesList />
-        <button
-          onClick={() => alert(<FilesList />)}>
-          Toggle theme
-        </button>
-      </div>
-    </>
-  )
+    <div className="App">
+      <h1>Choose a file to print</h1>
+      <input type="file" onChange={handlePrint} />
+    </div>
+  );
 }
 
 export default Popup;
