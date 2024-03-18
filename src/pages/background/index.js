@@ -1,7 +1,14 @@
-console.log('background loaded');
+console.log('background loaded')
+// Тест работы в background.js
 
-chrome.runtime.onInstalled.addListener(function() {
-    chrome.printing.getPrinters(function(printers) {
-      console.log("Printers:", printers)
-    })
-  })
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'printFile') {
+      const iframe = document.getElementById('receipt')
+      iframe.onload = () => {
+        iframe.contentWindow.print()
+        URL.revokeObjectURL(message.fileBlobURL)
+        document.body.removeChild(iframe)
+      }
+      iframe.src = message.fileBlobURL
+    }
+})

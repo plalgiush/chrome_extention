@@ -21,7 +21,8 @@ export default defineConfig({
         input: {
           main: resolve(__dirname, 'index.html'),
           popup: resolve(pagesDir, 'popup', 'index.html'),
-          background: resolve(pagesDir, 'background', 'index.js')
+          background: resolve(pagesDir, 'background', 'index.js'),
+          content: resolve(pagesDir, 'content', 'index.js'),
         },
         output: {
           entryFileNames: 'src/pages/[name]/index.js'
