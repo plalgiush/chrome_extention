@@ -1,7 +1,7 @@
 console.log('background loaded')
-// Тест работы в background.js
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log(message, sender, sendResponse)
     if (message.type === 'printFile') {
       const iframe = document.getElementById('receipt')
       iframe.onload = () => {

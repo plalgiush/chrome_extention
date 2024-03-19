@@ -3,7 +3,7 @@
   "name": "Print file",
   "version": "1.0.0",
   "description": "A pdf & fpx files print Chrome extension with React.",
-  "permissions": ["webRequest", "activeTab", "storage", "tabs", "downloads", "printerProvider", "unlimitedStorage"],
+  "permissions": ["webRequest", "activeTab", "storage", "tabs", "downloads", "printerProvider", "scripting", "nativeMessaging"],
   "background": {
     "service_worker": "/src/pages/background/index.js"
   },
@@ -22,6 +22,14 @@
   "action": {
     "default_popup": "/src/pages/popup/index.html",
     "default_title": "Click to show an alert"
+  },
+  "commands": {
+    "print-file": {
+      "suggested_key": {
+        "default":  "Ctrl+Shift+P"
+      },
+      "description": "Print this file"
+    }
   },
   "icons": {
     "34": "icon-34.png",
