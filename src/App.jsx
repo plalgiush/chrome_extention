@@ -38,12 +38,12 @@ function App() {
         </form>
         <FilesList />
 
-        <iframe
+        {/* <iframe
           id="receipt"
           src="/payment/receipt"
           style={{ display: 'none' }}
           title="Receipt"
-        />
+        /> */}
     </div>
   );
 }
