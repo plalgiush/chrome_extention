@@ -1,31 +1,15 @@
 const b = 'background loaded'
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // console.log(b, request, sender, sendResponse)
+  // console.log(b, request)
   if (request.action === 'testStorage') {
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
       if (tabs.length > 0) {
         let activeTab = tabs[0]
-        // chrome.printerProvider.onGetPrintersRequested.addListener(
-        //   function ( resultCallback ) {
-        //       console.log(resultCallback)
-        //       resultCallback( [{
-        //           id: 'customprinter',
-        //           name: 'Custom Printer',
-        //           description: ''
-        //       }] );
-        //   }
-        // );
-        
-        // chrome.printerProvider.onGetCapabilityRequested.addListener(function (printerId, resultCallback) {
-        //     console.log(printerId);
-        //     if(printerId == 'customprinter') {
-        //         resultCallback(capabilities);
-        //     }
-        // })
+
         chrome.tabs.sendMessage(activeTab.id, {url: request.url, action: request.action, type: request.type }, (response) => {
           if (response) {
-            // console.log(11, response.farewell);
+            console.log(12, response.farewell);
           } else {
             console.log("No response received");
           }
@@ -34,6 +18,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         console.log("No active tabs found")
       }
     })
+  } else if (request.action === 'testUploadFile') {
+    chrome.storage.local.get("fileObj", function(items) {
+      const {url = items.fileObj.url, type = items.fileObj.type} = items
+
+      if (!chrome.runtime.error) {
+        console.log('we are added file into extension')
+
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+          if (tabs.length > 0) {
+            let activeTab = tabs[0]
+    
+            chrome.tabs.sendMessage(activeTab.id, {url: request.url, action: request.action, type: request.type }, (response) => {
+              if (response) {
+                console.log(response.farewell);
+              } else {
+                console.log("No response received");
+              }
+            })
+          } else {
+            console.log("No active tabs found")
+          }
+        })
+      }
+    })
+    console.log('hi from browser page')
   }
   // if (request.type === 'printFile') {
   //   console.log(b, request.fileUrl)

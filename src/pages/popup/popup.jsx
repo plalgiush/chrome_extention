@@ -3,17 +3,15 @@ import React, { useState } from 'react'
 const Popup = () => {
   const [file, setFile] = useState(null)
   const [getingFiles, setGetingFiles] = useState(null)
+  const [fileFromWeb, setFileFromWeb] = useState(null)
 
   const getFileBlob = async(base64) => {
     try {
       const response = await fetch(base64)
       const blob = await response.blob()
 
-      // console.log(38, blob)
-
       const fileL = new File([blob], "File name",{ type: `${blob.type}` })
       const url = URL.createObjectURL(fileL)
-      // console.log(42, url)
 
       chrome.storage.local.set({ "fileObj" : { url: response.url, type: blob.type} }, function() {
         if (chrome.runtime.error) {
@@ -28,11 +26,9 @@ const Popup = () => {
   const setStorageData = (data) => {
     let reader = new FileReader()
     reader.readAsDataURL(data)
-    // console.log(data, data.name)
 
     setGetingFiles(data.name)
     reader.onload = (e) => {
-      // console.log(51, reader.result, data.type, data)
       getFileBlob(reader.result)
     }
   }
@@ -44,12 +40,10 @@ const Popup = () => {
 
   const handlePrint = async() => {
     if (file) {
-      // console.log(73, file)
       chrome.storage.local.get("fileObj", function(items) {
         const {url = items.fileObj.url, type = items.fileObj.type} = items
 
         if (!chrome.runtime.error) {
-          // console.log(78, url, type)
           chrome.runtime.sendMessage({ action: 'testStorage', url, type })
         }
       })
@@ -71,10 +65,20 @@ const Popup = () => {
     }
   }
 
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    chrome.storage.local.get("fileObj", function(items) {
+      const {name = items.fileObj.name , url = items.fileObj.url, type = items.fileObj.type} = items
+
+      if (!chrome.runtime.error) {
+        setFileFromWeb(name)
+      }
+    })
+  })
+
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
-      {getingFiles}
+      {getingFiles || fileFromWeb}
       <button onClick={handlePrint} disabled={!file}>Print</button>
     </div>
   )
