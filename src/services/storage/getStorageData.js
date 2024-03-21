@@ -2,7 +2,7 @@
 
 export const getStorageData = async(action) => {
     console.log('getStorage', action)
-    
+
     try {
         chrome.storage.local.get("fileObj", function(items) {
             const {url = items.fileObj.url, type = items.fileObj.type} = items

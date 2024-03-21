@@ -2,7 +2,7 @@ const b = 'background'
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log(b, request.action)
-  
+
   if (request.action === "printing") {
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
       if (tabs.length > 0) {
@@ -14,27 +14,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           } else {
             console.log("No response received")
           }
-          return true
         })
       } else {
         console.log("No active tabs found")
       }
-      return true
     })
   }
 })
 
-// chrome.commands.onCommand.addListener((command) => {
-//   if (command === "print-file") {
-//     getCurrentTabId().then((tabId) => {
-//       chrome.tabs.sendMessage(tabId, { action: "print-file" });
-//     });
-//   }
-// });
+chrome.commands.onCommand.addListener((command) => {
+  if (command === "printing") {
+    getCurrentTabId().then((tabId) => {
+      chrome.tabs.sendMessage(tabId, { action: "printing" })
+    })
+  }
+})
 
-// async function getCurrentTabId() {
-//   let queryOptions = { active: true, lastFocusedWindow: true };
-//   let [tab] = await chrome.tabs.query(queryOptions);
-//   console.log(tab)
-//   return tab.id;
-// }
+async function getCurrentTabId() {
+  let queryOptions = { active: true, lastFocusedWindow: true };
+  let [tab] = await chrome.tabs.query(queryOptions);
+  return tab.id;
+}

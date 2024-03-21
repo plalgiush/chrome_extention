@@ -45,13 +45,15 @@ const Popup = () => {
   }
 
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    chrome.storage.local.get("fileObj", function(items) {
-      const {name = items.fileObj.name , url = items.fileObj.url, type = items.fileObj.type} = items
-
-      if (!chrome.runtime.error) {
-        setGetingFiles(name)
-      }
-    })
+    if (request.action === "uploadedFile") {
+      chrome.storage.local.get("fileObj", function(items) {
+        const {name = items.fileObj.name , url = items.fileObj.url, type = items.fileObj.type} = items
+  
+        if (!chrome.runtime.error) {
+          setGetingFiles(name)
+        }
+      })
+    }
   })
 
   return (

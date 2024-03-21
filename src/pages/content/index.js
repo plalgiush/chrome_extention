@@ -8,14 +8,13 @@ const fileInput = document.querySelector("input[type=file]")
 
 fileInput.addEventListener("change", async (e) => {
   const file = e.target.files[0]
-  console.log(file)
 
   if (file) {
     let reader = new FileReader()
     reader.readAsDataURL(file)
 
     reader.onload = () => {
-      setStorageData('uploadedFile', file.name, reader.result)
+      setStorageData("uploadedFile", file.name, reader.result)
     }
   }
 })

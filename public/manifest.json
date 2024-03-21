@@ -24,7 +24,7 @@
     "default_title": "Click to show an alert"
   },
   "commands": {
-    "print-file": {
+    "printing": {
       "suggested_key": {
         "default":  "Ctrl+Shift+P"
       },
