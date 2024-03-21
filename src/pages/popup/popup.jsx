@@ -1,21 +1,18 @@
 import React, { useState } from 'react'
+// import { setStorageData } from '../../db/storageData'
+// import { getStorageData } from '../../db/getStorageData'
 
 const Popup = () => {
-  const [file, setFile] = useState(null)
   const [getingFiles, setGetingFiles] = useState(null)
-  const [fileFromWeb, setFileFromWeb] = useState(null)
 
-  const getFileBlob = async(base64) => {
+  const setStorageData = async(getingFile, base64) => {
     try {
       const response = await fetch(base64)
       const blob = await response.blob()
 
-      const fileL = new File([blob], "File name",{ type: `${blob.type}` })
-      const url = URL.createObjectURL(fileL)
-
-      chrome.storage.local.set({ "fileObj" : { url: response.url, type: blob.type} }, function() {
+      chrome.storage.local.set({ "fileObj" : { name: getingFile, url: response.url, type: blob.type} }, function() {
         if (chrome.runtime.error) {
-          console.log("Runtime error.");
+          console.log("Runtime error.")
         }
       })
     } catch(err) {
@@ -23,45 +20,27 @@ const Popup = () => {
     }
   }
 
-  const setStorageData = (data) => {
-    let reader = new FileReader()
-    reader.readAsDataURL(data)
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    setGetingFiles(file.name)
 
-    setGetingFiles(data.name)
-    reader.onload = (e) => {
-      getFileBlob(reader.result)
+    let reader = new FileReader()
+    reader.readAsDataURL(file)
+
+    reader.onload = () => {
+      setStorageData(file.name, reader.result)
     }
   }
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0])
-    setStorageData(e.target.files[0])
-  }
-
   const handlePrint = async() => {
-    if (file) {
+    if (getingFiles) {
       chrome.storage.local.get("fileObj", function(items) {
-        const {url = items.fileObj.url, type = items.fileObj.type} = items
+        const {name = items.fileObj.name , url = items.fileObj.url, type = items.fileObj.type} = items
 
         if (!chrome.runtime.error) {
-          chrome.runtime.sendMessage({ action: 'testStorage', url, type })
+          chrome.runtime.sendMessage({ action: "printing", url, type })
         }
       })
-      // const fileUrl = URL.createObjectURL(file)
-      // chrome.runtime.sendMessage({ type: 'printFile', fileUrl });
-
-      // const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
-      // const tab = tabs[0]
-      // if (tab) {
-      //   chrome.runtime.sendMessage({ type: 'printFile', fileUrl });
-      //   // chrome.tabs.sendMessage(tab.id, { action: 'printFile', fileUrl }, (response) => {
-      //   //   if (!response) {
-      //   //     console.error('Error: Could not establish connection. Receiving end does not exist.')
-      //   //   }
-      //   // })
-      // } else {
-      //   console.error('Error: No active tab found.')
-      // }
     }
   }
 
@@ -70,7 +49,7 @@ const Popup = () => {
       const {name = items.fileObj.name , url = items.fileObj.url, type = items.fileObj.type} = items
 
       if (!chrome.runtime.error) {
-        setFileFromWeb(name)
+        setGetingFiles(name)
       }
     })
   })
@@ -78,8 +57,8 @@ const Popup = () => {
   return (
     <div>
       <input type="file" onChange={handleFileChange} />
-      {getingFiles || fileFromWeb}
-      <button onClick={handlePrint} disabled={!file}>Print</button>
+      {getingFiles}
+      <button onClick={handlePrint} disabled={!getingFiles}>Print</button>
     </div>
   )
 }

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
-import { db } from './db/db';
+import { db } from './services/db/db';
 import { FilesList } from './components/FilesList/FilesList';
 
 function App() {
@@ -37,7 +37,6 @@ function App() {
           <button type="button" onClick={addFile}>Upload</button>
         </form>
         <FilesList />
-
         <iframe
           id="receipt"
           src="about:blank"

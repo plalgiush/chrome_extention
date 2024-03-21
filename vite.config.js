@@ -6,6 +6,10 @@ const rootDir = resolve(__dirname);
 const srcDir = resolve(rootDir, 'src');
 const pagesDir = resolve(srcDir, 'pages');
 
+const utils = [
+  "utils"
+]
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -18,14 +22,20 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     rollupOptions: {
-        input: {
+        input:
+        {
           main: resolve(__dirname, 'index.html'),
           popup: resolve(pagesDir, 'popup', 'index.html'),
           background: resolve(pagesDir, 'background', 'index.js'),
           content: resolve(pagesDir, 'content', 'index.js'),
+          utils: resolve(srcDir, 'utils', 'printing.js'),
         },
         output: {
-          entryFileNames: 'src/pages/[name]/index.js'
+          entryFileNames: function (file) {
+            return utils.includes(file.name)
+              ? `src/[name]/printing.js`
+              : 'src/pages/[name]/index.js'
+            }
         }
       }
     }
